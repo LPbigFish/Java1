@@ -1,37 +1,54 @@
 package lab.objects;
 
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import lab.interfaces.RenderableObject;
+import lab.interfaces.RenderableEntity;
 
-public class Grid implements RenderableObject {
-    private final Point2D canvasSize;
+public class Grid extends RenderableEntity {
+    private final Point2D gridSize;
+    private byte[][] grid;
 
-    public Grid(Canvas canvas) {
-        this.canvasSize = new Point2D(canvas.getWidth(), canvas.getHeight());
+    public Grid(Point2D position, Point2D gridSize) {
+        super(position);
+        this.gridSize = gridSize;
+        this.grid = new byte[(int) gridSize.getX()][(int) gridSize.getY()];
+        for  (int i = 0; i < gridSize.getX(); i++) {
+            grid[i] = new byte[(int) gridSize.getY()];
+            for (int j = 0; j < gridSize.getY(); j++) {
+                grid[i][j] = 0;
+            }
+        }
     }
 
-    public void render(GraphicsContext gc) {
-        gc.setFill(Color.DARKGREEN);
-        for (int i = 0; i < canvasSize.getX(); i += 25) {
-            if (i > canvasSize.getX() / 2) {
-                gc.setFill(Color.LIME);
-            }
-            gc.fillRect(i, 0, 2, canvasSize.getY());
-        }
+    @Override
+    protected void internalDraw(GraphicsContext gc) {
         gc.setFill(Color.DARKRED);
-        for (int i = 0; i < canvasSize.getY(); i += 25) {
-            if (i > canvasSize.getY() / 2) {
-                gc.setFill(Color.RED);
+        gc.fillRect(pos.getX(), pos.getY(), 2, gridSize.getY() + 2);
+        gc.fillRect(pos.getX(), pos.getY() + gridSize.getY() + 2, gridSize.getX() + 4, 2);
+        gc.fillRect(pos.getX() + gridSize.getX() + 2, pos.getY(), 2, gridSize.getY() + 2 );
+        for  (int i = 0; i < gridSize.getX(); i++) {
+            for (int j = 0; j < gridSize.getY(); j++) {
+                gc.setFill(Color.color((double) (grid[i][j] + 128) / 255, (double) (grid[i][j] + 128) / 255, (double) (grid[i][j] + 128) / 255));
+                gc.fillRect(this.pos.getX() + 2 + i,  this.pos.getY() + 2 + j, 1, 1);
             }
-            gc.fillRect(0, i, canvasSize.getX(), 2);
         }
     }
 
+    @Override
     public void simulate(long time) {
+        for (int i = 0; i < gridSize.getX(); i++) {
+            for (int j = 0; j < gridSize.getY(); j++) {
+                grid[i][j] = (byte) ((i + j) % 256 - 128);
+            }
+        }
+    }
 
+    public void zeroOut() {
+        for (int i = 0; i < gridSize.getX(); i++) {
+            for (int j = 0; j < gridSize.getY(); j++) {
+                grid[i][j] = 0;
+            }
+        }
     }
 }
