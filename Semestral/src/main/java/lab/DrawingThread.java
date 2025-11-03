@@ -4,10 +4,6 @@ import javafx.animation.AnimationTimer;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import lab.interfaces.RenderableEntity;
-import lab.interfaces.RenderableObject;
-import lab.objects.Grid;
-import lab.objects.Timer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +13,7 @@ public class DrawingThread extends AnimationTimer {
     private final Canvas canvas;
     private final GraphicsContext gc;
 
-    private static final double FPS_LIMIT = 24.0;
+    private static final double FPS_LIMIT = 60.0;
     private static final long FRAME_TIME = (long) (1_000_000_000.0 / FPS_LIMIT);
     private long lastUpdate = 0;
 
@@ -26,9 +22,9 @@ public class DrawingThread extends AnimationTimer {
     public DrawingThread(Canvas canvas) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
-        this.gc.scale(5, 5);
+        this.gc.scale(2, 2);
         this.renderableObjects = new ArrayList<>();
-        renderableObjects.add(new Grid(new Point2D(canvas.getWidth() / 10 - 52, 10), new Point2D(100, 160)));
+        renderableObjects.add(new Grid(new Point2D(canvas.getWidth() / 10 - 52,20), new Point2D(200, 320)));
         renderableObjects.add(new Timer(new Point2D(2, 10)));
     }
 

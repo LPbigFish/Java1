@@ -2,8 +2,8 @@ package lab;
 
 import javafx.scene.canvas.GraphicsContext;
 
-public interface DrawableSimulate {
+public interface DrawableSimulable {
     void draw(GraphicsContext gc);
 
-    void simulate(double delta);
+    void simulate(double deltaTime);
 }

@@ -1,4 +1,4 @@
-package lab.interfaces;
+package lab;
 
 import javafx.geometry.Rectangle2D;
 
