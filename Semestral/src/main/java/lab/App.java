@@ -2,6 +2,7 @@ package lab;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -23,27 +24,21 @@ public class App extends Application {
         launch(args);
     }
 
-    private Canvas canvas;
-    private AnimationTimer timer;
     Logger logger = Logger.getLogger(this.getClass().getName());
+
+    GameScene gameScene;
 
     @Override
     public void start(Stage primaryStage) {
         try {
-            //Construct a main window with a canvas.
-            Group root = new Group();
-            canvas = new Canvas(1280, 960);
-            root.getChildren().add(canvas);
-            Scene scene = new Scene(root, 1280, 960);
-            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("application.css")).toExternalForm());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GameScene.fxml"));
+            gameScene = loader.getController();
+            Scene scene = new Scene(loader.load());
             primaryStage.setScene(scene);
             primaryStage.resizableProperty().set(false);
-            primaryStage.setTitle("Adventure");
+            primaryStage.setTitle("SandTris");
             primaryStage.show();
-            //Exit program when main window is closed
             primaryStage.setOnCloseRequest(this::exitProgram);
-            timer = new DrawingThread(canvas);
-            timer.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,7 +46,8 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
-        timer.stop();
+        gameScene.stop();
+        gameScene = null;
         super.stop();
     }
 

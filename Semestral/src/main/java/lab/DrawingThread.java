@@ -22,9 +22,9 @@ public class DrawingThread extends AnimationTimer {
     public DrawingThread(Canvas canvas) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
-        this.gc.scale(2, 2);
+        this.gc.scale(1.9, 1.9);
         this.renderableObjects = new ArrayList<>();
-        renderableObjects.add(new Grid(new Point2D(canvas.getWidth() / 10 - 52,20), new Point2D(200, 320)));
+        renderableObjects.add(new Grid(new Point2D(canvas.getWidth() / 2 - 100 * 2 - 32,20), new Point2D(200, 320)));
         renderableObjects.add(new Timer(new Point2D(2, 10)));
     }
 

@@ -31,6 +31,8 @@ public class GameScene {
     @FXML
     private Canvas shapeCanvas;
 
+    private DrawingThread drawingThread;
+
     @FXML
     void initialize() {
         assert anchorPane != null : "fx:id=\"anchorPane\" was not injected: check your FXML file 'GameScene.fxml'.";
@@ -39,6 +41,12 @@ public class GameScene {
         assert scoreTable != null : "fx:id=\"scoreTable\" was not injected: check your FXML file 'GameScene.fxml'.";
         assert shapeCanvas != null : "fx:id=\"shapeCanvas\" was not injected: check your FXML file 'GameScene.fxml'.";
 
+
+        drawingThread = new DrawingThread(mainCanvas);
+        drawingThread.start();
     }
 
+    public void stop() {
+        drawingThread.stop();
+    }
 }
