@@ -1,9 +1,10 @@
 package lab;
 
 import javafx.animation.AnimationTimer;
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import lab.components.RenderableEntity;
+import lab.interfaces.RenderableObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,33 +13,47 @@ public class DrawingThread extends AnimationTimer {
 
     private final Canvas canvas;
     private final GraphicsContext gc;
-
-    private static final double FPS_LIMIT = 60.0;
-    private static final long FRAME_TIME = (long) (1_000_000_000.0 / FPS_LIMIT);
-    private long lastUpdate = 0;
-
+    private final long FRAME_TIME;
+    private long SIMULATION_TIME;
+    private long lastFrameTime = 0;
+    private long lastSimulationTime = 0;
     private final List<RenderableEntity> renderableObjects;
-
-    public DrawingThread(Canvas canvas) {
+    public DrawingThread(Canvas canvas, List<RenderableEntity> renderableObjects) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.gc.scale(1.9, 1.9);
+        this.SIMULATION_TIME = 1_000_000_000 / 80;
         this.renderableObjects = new ArrayList<>();
-        renderableObjects.add(new Grid(new Point2D(canvas.getWidth() / 2 - 100 * 2 - 32,20), new Point2D(200, 320)));
-        renderableObjects.add(new Timer(new Point2D(2, 10)));
+        this.renderableObjects.addAll(renderableObjects);
+        double FPS_LIMIT = 60.0;
+        FRAME_TIME = (long) (1_000_000_000 / FPS_LIMIT);
     }
 
-    /**
-     * Draws objects into the canvas. Put you code here.
-     */
     @Override
     public void handle(long now) {
-        if (lastUpdate != 0 && (now - lastUpdate) < FRAME_TIME) return;
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        for (RenderableObject renderableObject : renderableObjects) {
-            renderableObject.simulate(now);
-            renderableObject.draw(gc);
+        if (lastFrameTime == 0) {
+            lastFrameTime = now;
+            lastSimulationTime = now;
+            return;
         }
-        lastUpdate = now;
+
+        while (now - lastSimulationTime >= SIMULATION_TIME) {
+            for  (RenderableObject renderableObject : renderableObjects) {
+                renderableObject.simulate(now);
+                lastSimulationTime += SIMULATION_TIME;
+            }
+        }
+
+        if (now - lastFrameTime >= FRAME_TIME) {
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            for (RenderableObject renderableObject : renderableObjects) {
+                renderableObject.draw(gc);
+            }
+            lastFrameTime = now;
+        }
+    }
+
+    public void updateSpeed(int speed) {
+        this.SIMULATION_TIME = 1_000_000_000 / speed;
     }
 }
